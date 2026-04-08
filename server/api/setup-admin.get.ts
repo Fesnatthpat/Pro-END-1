@@ -1,42 +1,57 @@
 import prisma from '~~/server/utils/prisma'
+import bcrypt from 'bcrypt'
 
 export default defineEventHandler(async (event) => {
     try {
-        // 1. เช็คก่อนว่ามีอีเมล admin นี้ในระบบหรือยัง
-        const existingAdmin = await prisma.user.findUnique({
-            where: { email: 'admin@bsru.ac.th' }
+        const hashedPassword = await bcrypt.hash('password123', 10)
+
+        // 1. สร้าง Admin
+        const admin = await prisma.admin.upsert({
+            where: { email: 'admin@bsru.ac.th' },
+            update: { password: hashedPassword },
+            create: {
+                email: 'admin@bsru.ac.th',
+                password: hashedPassword,
+                firstName: 'Admin',
+                lastName: 'System',
+            },
         })
 
-        if (existingAdmin) {
-            return { 
-                status: 'success', 
-                message: 'มีบัญชี Admin นี้อยู่ในระบบแล้วครับ สามารถไปล็อกอินได้เลย!', 
-                user: existingAdmin 
-            }
-        }
+        // 2. สร้าง Advisor (อาจารย์ที่ปรึกษา)
+        const advisor = await prisma.user.upsert({
+            where: { email: 'advisor@bsru.ac.th' },
+            update: { password: hashedPassword },
+            create: {
+                email: 'advisor@bsru.ac.th',
+                password: hashedPassword,
+                firstName: 'ดร.สมเจตน์',
+                lastName: 'สายวิทย์',
+                role: 'ADVISOR',
+            },
+        })
 
-        // 2. ถ้ายังไม่มี ให้ใช้ Prisma สร้าง User ใหม่
-        const newAdmin = await prisma.user.create({
-            data: {
-                email: 'admin@bsru.ac.th',
-                password: 'password123', // รหัสผ่านชั่วคราวสำหรับทดสอบ
-                firstName: 'ผู้ดูแลระบบ',
-                lastName: 'สูงสุด',
-                role: 'ADMIN' // กำหนดสิทธิ์เป็นแอดมิน
-            }
+        // 3. สร้าง Student (นักศึกษา)
+        const student = await prisma.user.upsert({
+            where: { email: 'student@bsru.ac.th' },
+            update: { password: hashedPassword },
+            create: {
+                email: 'student@bsru.ac.th',
+                password: hashedPassword,
+                firstName: 'สมบูรณ์',
+                lastName: 'แบบดี',
+                role: 'STUDENT',
+            },
         })
 
         return { 
             status: 'success', 
-            message: 'สร้างบัญชี Admin สำเร็จเรียบร้อย!', 
-            user: newAdmin 
+            message: 'All users (Admin, Advisor, Student) created/updated with hashed passwords successfully',
+            data: { admin, advisor, student }
         }
-
-    } catch (error) {
-        console.error("Setup Admin Error:", error)
-        throw createError({
-            statusCode: 500,
-            statusMessage: 'เกิดข้อผิดพลาดในการสร้างฐานข้อมูล'
-        })
+    } catch (error: any) {
+        return { 
+            status: 'error', 
+            message: error.message 
+        }
     }
 })

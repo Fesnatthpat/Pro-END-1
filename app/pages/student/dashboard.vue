@@ -4,7 +4,7 @@
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
             <div>
                 <h1 class="text-2xl font-bold text-gray-900">แดชบอร์ดนักศึกษา</h1>
-                <p class="text-gray-500 mt-1">ยินดีต้อนรับ, สมชาย ใจดี (รหัสนักศึกษา: 661234567)</p>
+                <p class="text-gray-500 mt-1">ยินดีต้อนรับ, {{ user?.firstName }} (รหัสนักศึกษา: 661234567)</p>
             </div>
             <div
                 class="bg-blue-50 text-blue-700 px-4 py-2 rounded-lg text-sm font-medium border border-blue-100 flex items-center gap-2">
@@ -92,5 +92,9 @@
 </template>
 
 <script setup>
-// ในอนาคตเราจะเขียนโค้ดเช็ค Role ตรงนี้ ว่าถ้าไม่ใช่ Student ให้ Redirect กลับไป
+definePageMeta({
+    middleware: 'auth'
+})
+
+const user = useCookie('user_data')
 </script>

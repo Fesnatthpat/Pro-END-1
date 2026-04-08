@@ -82,6 +82,13 @@ import { ref } from 'vue'
 
 definePageMeta({ layout: 'login' })
 
+// 1. ประกาศใช้ Cookie (ตั้งชื่อว่า 'user_data')
+const userCookie = useCookie('user_data', {
+    maxAge: 60 * 60 * 24 * 7, // เก็บไว้ 7 วัน
+    path: '/',
+    watch: true
+})
+
 const email = ref('')
 const password = ref('')
 const errorMessage = ref('')
@@ -101,13 +108,24 @@ const handleLogin = async () => {
             }
         })
 
-        // ถ้าหลังบ้านตอบกลับมาว่ารหัสถูก ให้เช็ค Role
-        if (response.user.role === 'ADMIN') {
-            alert(`เข้าสู่ระบบสำเร็จ! ยินดีต้อนรับคุณ ${response.user.firstName}`)
-            navigateTo('/admin/dashboard') 
-        } else {
-            alert('เข้าสู่ระบบสำเร็จ!')
-            navigateTo('/student/dashboard') 
+        // ถ้าหลังบ้านตอบกลับมาว่ารหัสถูก ให้บันทึก Cookie และเช็ค Role
+        if (response && response.user) {
+            // บันทึกข้อมูลผู้ใช้ลงใน Cookie
+            userCookie.value = {
+                id: response.user.id,
+                email: response.user.email,
+                firstName: response.user.firstName,
+                role: response.user.role
+            }
+
+            const role = response.user.role
+            if (role === 'ADMIN') {
+                return navigateTo('/admin/dashboard')
+            } else if (role === 'STUDENT') {
+                return navigateTo('/student/dashboard')
+            } else if (role === 'ADVISOR') {
+                return navigateTo('/advisor/dashboard')
+            }
         }
 
     } catch (error) {

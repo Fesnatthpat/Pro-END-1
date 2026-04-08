@@ -2,7 +2,7 @@
     <div class="max-w-6xl mx-auto">
         <div class="mb-8">
             <h1 class="text-2xl font-bold text-gray-900">แดชบอร์ดอาจารย์ที่ปรึกษา</h1>
-            <p class="text-gray-500 mt-1">ตรวจสอบความคืบหน้าและให้คำปรึกษานักศึกษาในความดูแล</p>
+            <p class="text-gray-500 mt-1">สวัสดีครับอาจารย์ {{ user?.firstName }}, ตรวจสอบความคืบหน้าและให้คำปรึกษานักศึกษาในความดูแล</p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -19,3 +19,11 @@
         </div>
     </div>
 </template>
+
+<script setup>
+definePageMeta({
+    middleware: 'auth'
+})
+
+const user = useCookie('user_data')
+</script>
