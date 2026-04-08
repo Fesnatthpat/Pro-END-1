@@ -1,0 +1,27 @@
+{
+  "name": "pro-end-1",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.7.0",
+    "@prisma/client": "^7.6.0",
+    "@tailwindcss/vite": "^4.2.2",
+    "nuxt": "^4.4.2",
+    "pg": "^8.20.0",
+    "tailwindcss": "^4.2.2",
+    "vue": "^3.5.31",
+    "vue-router": "^5.0.4"
+  },
+  "devDependencies": {
+    "@nuxtjs/supabase": "^2.0.4",
+    "@types/pg": "^8.20.0",
+    "prisma": "^7.6.0"
+  }
+}

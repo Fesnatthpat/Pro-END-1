@@ -1,0 +1,26 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  // ใน Prisma 7 เราจะย้าย URL ไปไว้ที่ไฟล์ prisma.config.ts แทนครับ
+}
+
+// ตัวอย่าง Model พื้นฐานสำหรับระบบ (คุณสามารถเพิ่ม Model อื่นๆ ต่อจากตรงนี้ได้)
+enum Role {
+  ADMIN
+  ADVISOR
+  STUDENT
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  firstName String
+  lastName  String
+  role      Role     @default(STUDENT)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
