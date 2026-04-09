@@ -1,5 +1,5 @@
 import prisma from '~~/server/utils/prisma'
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcryptjs'
 
 export default defineEventHandler(async (event) => {
     // 1. รับข้อมูลจากหน้า Login

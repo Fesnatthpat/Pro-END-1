@@ -1,48 +1,65 @@
 import 'dotenv/config'
-import { PrismaClient } from '@prisma/client'
-
-const prisma = new PrismaClient()
+import prisma from '../server/utils/prisma'
+import bcrypt from 'bcryptjs'
 
 async function main() {
   console.log('--- เริ่มการเพิ่มข้อมูล (Seeding) ---')
 
-  // 1. เพิ่มข้อมูล Admin คนแรก
-  const admin = await prisma.admin.upsert({
+  const hashedPassword = await bcrypt.hash('password123', 10)
+
+  // 1. เพิ่มข้อมูล Admin
+  await prisma.admin.upsert({
     where: { email: 'admin@bsru.ac.th' },
-    update: {},
+    update: { password: hashedPassword },
     create: {
       email: 'admin@bsru.ac.th',
-      password: 'password123', // รหัสผ่านตั้งต้น
+      password: hashedPassword,
       firstName: 'Admin',
       lastName: 'System',
     },
   })
 
-  console.log(`เพิ่ม Admin สำเร็จ: ${admin.email}`)
-  
-  // 2. เพิ่มข้อมูลนักศึกษาตัวอย่าง
-  const student = await prisma.user.upsert({
+  // 2. เพิ่มข้อมูลนักศึกษา
+  await prisma.user.upsert({
     where: { email: 'student@bsru.ac.th' },
-    update: {},
+    update: { password: hashedPassword },
     create: {
       email: 'student@bsru.ac.th',
-      password: 'password123',
+      password: hashedPassword,
       firstName: 'สมชาย',
       lastName: 'ใจดี',
       role: 'STUDENT',
     },
   })
+
+  // 3. เพิ่มรายชื่ออาจารย์ที่ปรึกษา (Advisors)
+  const advisors = [
+    { email: 'somsri@bsru.ac.th', firstName: 'ดร.สมศรี', lastName: 'เรียนเก่ง' },
+    { email: 'somchai_t@bsru.ac.th', firstName: 'ผศ.สมชาย', lastName: 'ทวีคูณ' },
+    { email: 'wichai@bsru.ac.th', firstName: 'อ.วิชัย', lastName: 'ใฝ่รู้' },
+    { email: 'kanya@bsru.ac.th', firstName: 'ดร.กัญญา', lastName: 'รักษาดี' },
+  ]
+
+  for (const adv of advisors) {
+    await prisma.user.upsert({
+      where: { email: adv.email },
+      update: { password: hashedPassword },
+      create: {
+        email: adv.email,
+        password: hashedPassword,
+        firstName: adv.firstName,
+        lastName: adv.lastName,
+        role: 'ADVISOR',
+      },
+    })
+  }
   
-  console.log(`เพิ่ม Student สำเร็จ: ${student.email}`)
-  console.log('--- เสร็จสิ้นการเพิ่มข้อมูล ---')
+  console.log('--- เพิ่มรายชื่ออาจารย์และข้อมูลตัวอย่างสำเร็จ ---')
 }
 
 main()
-  .then(async () => {
-    await prisma.$disconnect()
-  })
+  .then(async () => {})
   .catch(async (e) => {
     console.error(e)
-    await prisma.$disconnect()
     process.exit(1)
   })

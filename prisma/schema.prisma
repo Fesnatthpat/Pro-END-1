@@ -12,6 +12,12 @@ enum Role {
   SUPERADMIN
 }
 
+enum ProjectStatus {
+  PENDING   // รออนุมัติ
+  APPROVED  // อนุมัติแล้ว
+  REJECTED  // ไม่อนุมัติ/ให้แก้ไข
+}
+
 model Admin {
   id        String   @id @default(uuid())
   email     String   @unique
@@ -23,12 +29,54 @@ model Admin {
 }
 
 model User {
+  id              String    @id @default(uuid())
+  email           String    @unique
+  password        String
+  firstName       String
+  lastName        String
+  role            Role      @default(STUDENT)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  projects        Project[] @relation("StudentProjects")
+  advisedProjects Project[] @relation("AdvisorProjects")
+}
+
+model Project {
+  id            String         @id @default(uuid())
+  titleTh       String
+  titleEn       String
+  description   String?
+  status        ProjectStatus  @default(PENDING)
+  studentId     String
+  student       User           @relation("StudentProjects", fields: [studentId], references: [id])
+  advisorId     String
+  advisor       User           @relation("AdvisorProjects", fields: [advisorId], references: [id])
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  consultations Consultation[]
+  documents     Document[]
+}
+
+model Document {
   id        String   @id @default(uuid())
-  email     String   @unique
-  password  String
-  firstName String
-  lastName  String
-  role      Role     @default(STUDENT)
+  fileUrl   String
+  fileName  String
+  chapter   Int      // บทที่ 1-5
+  status    String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  feedback  String?
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Consultation {
+  id        String   @id @default(uuid())
+  date      DateTime @default(now())
+  topic     String
+  details   String?
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

@@ -17,6 +17,12 @@
                 <li>
                     <NuxtLink to="/projects" class="hover:text-blue-600 transition-colors">โครงงานทั้งหมด</NuxtLink>
                 </li>
+                <li v-if="user?.role === 'STUDENT'">
+                    <NuxtLink to="/student/dashboard" class="hover:text-blue-600 transition-colors">จัดการโครงงาน</NuxtLink>
+                </li>
+                <li v-if="user?.role === 'ADVISOR'">
+                    <NuxtLink to="/advisor/dashboard" class="hover:text-blue-600 transition-colors">แดชบอร์ดอาจารย์</NuxtLink>
+                </li>
                 <li>
                     <NuxtLink to="/status" class="hover:text-blue-600 transition-colors">เช็คสถานะ</NuxtLink>
                 </li>
@@ -70,6 +76,12 @@
                 หน้าแรก</NuxtLink>
             <NuxtLink to="/projects"
                 class="block px-3 py-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-blue-50">โครงงานทั้งหมด
+            </NuxtLink>
+            <NuxtLink v-if="user?.role === 'STUDENT'" to="/student/dashboard"
+                class="block px-3 py-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-blue-50">จัดการโครงงาน
+            </NuxtLink>
+            <NuxtLink v-if="user?.role === 'ADVISOR'" to="/advisor/dashboard"
+                class="block px-3 py-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-blue-50">แดชบอร์ดอาจารย์
             </NuxtLink>
             <NuxtLink to="/status"
                 class="block px-3 py-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-blue-50">เช็คสถานะ
