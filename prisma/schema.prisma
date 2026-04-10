@@ -42,19 +42,33 @@ model User {
 }
 
 model Project {
-  id            String         @id @default(uuid())
+  id            String           @id @default(uuid())
   titleTh       String
   titleEn       String
   description   String?
-  status        ProjectStatus  @default(PENDING)
+  status        ProjectStatus    @default(PENDING)
+  feedback      String?
   studentId     String
-  student       User           @relation("StudentProjects", fields: [studentId], references: [id])
+  student       User             @relation("StudentProjects", fields: [studentId], references: [id])
   advisorId     String
-  advisor       User           @relation("AdvisorProjects", fields: [advisorId], references: [id])
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
+  advisor       User             @relation("AdvisorProjects", fields: [advisorId], references: [id])
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
   consultations Consultation[]
   documents     Document[]
+  history       ProjectHistory[] // ความสัมพันธ์กับตารางประวัติ
+}
+
+model ProjectHistory {
+  id          String   @id @default(uuid())
+  titleTh     String
+  titleEn     String
+  description String?
+  status      String   // เก็บสถานะ ณ ขณะนั้น (เช่น REJECTED)
+  feedback    String?  // เก็บเหตุผลที่ถูกปฏิเสธในตอนนั้น
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
 }
 
 model Document {

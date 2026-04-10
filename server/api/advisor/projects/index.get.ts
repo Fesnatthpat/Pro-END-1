@@ -28,6 +28,11 @@ export default defineEventHandler(async (event) => {
                     orderBy: {
                         chapter: 'asc'
                     }
+                },
+                history: {
+                    orderBy: {
+                        createdAt: 'desc'
+                    }
                 }
             },
             orderBy: {

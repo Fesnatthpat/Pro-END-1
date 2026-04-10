@@ -1,28 +1,23 @@
 import prisma from '~~/server/utils/prisma'
 
 export default defineEventHandler(async (event) => {
-    const query = getQuery(event)
-    const studentId = query.studentId as string
-
-    if (!studentId) {
-        throw createError({
-            statusCode: 400,
-            statusMessage: 'ไม่พบรหัสนักศึกษา'
-        })
-    }
-
     try {
-        const project = await prisma.project.findFirst({
-            where: {
-                studentId: studentId
-            },
+        const projects = await prisma.project.findMany({
             include: {
+                student: {
+                    select: {
+                        firstName: true,
+                        lastName: true,
+                        email: true
+                    }
+                },
                 advisor: {
                     select: {
                         firstName: true,
                         lastName: true
                     }
                 },
+                documents: true,
                 history: {
                     orderBy: {
                         createdAt: 'desc'
@@ -33,7 +28,7 @@ export default defineEventHandler(async (event) => {
                 createdAt: 'desc'
             }
         })
-        return project
+        return projects
     } catch (error: any) {
         throw createError({
             statusCode: 500,

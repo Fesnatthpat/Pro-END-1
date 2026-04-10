@@ -11,11 +11,11 @@
                 <h4 class="font-bold text-gray-900 group-hover:text-blue-600">จัดการผู้ใช้งาน</h4>
                 <p class="text-xs text-gray-500 mt-1">เพิ่ม/ลบ อาจารย์และนักศึกษา</p>
             </NuxtLink>
-            <button
-                class="bg-white p-4 rounded-xl border border-gray-200 hover:shadow-md transition-shadow text-center">
-                <h4 class="font-bold text-gray-900">อนุมัติหัวข้อโครงงาน</h4>
+            <NuxtLink to="/admin/projects"
+                class="bg-white p-4 rounded-xl border border-gray-200 hover:shadow-md hover:border-blue-500 transition-all text-center group">
+                <h4 class="font-bold text-gray-900 group-hover:text-blue-600">อนุมัติหัวข้อโครงงาน</h4>
                 <p class="text-xs text-gray-500 mt-1">ตรวจสอบและเปลี่ยนสถานะ</p>
-            </button>
+            </NuxtLink>
             <button
                 class="bg-white p-4 rounded-xl border border-gray-200 hover:shadow-md transition-shadow text-center">
                 <h4 class="font-bold text-gray-900">จัดการสอบ</h4>
